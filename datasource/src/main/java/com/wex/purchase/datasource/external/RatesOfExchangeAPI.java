@@ -42,8 +42,8 @@ public class RatesOfExchangeAPI implements RatesOfExchangeOutPutPort {
     }
 
     @Override
-    public List<ExchangeRate> findAll() {
-        var response = getResponse();
+    public List<ExchangeRate> findAll(LocalDate purchaseDate) {
+        var response = getResponse(purchaseDate);
         var convertedResponse = convertResponse(response);
         return convertedResponse.getData();
     }
@@ -56,12 +56,12 @@ public class RatesOfExchangeAPI implements RatesOfExchangeOutPutPort {
                 .fromJson(response.join(), ExchangeRateResponse.class);
     }
 
-    private CompletableFuture<String> getResponse() {
+    private CompletableFuture<String> getResponse(LocalDate purchaseDate) {
         return webClientBuilder
                 .baseUrl(baseUri)
                 .build()
                 .get()
-                .uri(uriBuilder -> getUriWithQueryParams(uriBuilder))
+                .uri(uriBuilder -> getUriWithQueryParams(uriBuilder, purchaseDate))
                 .exchangeToMono(resp -> {
                     if (resp.statusCode() != HttpStatus.OK
                             && resp.statusCode() != HttpStatus.CREATED
@@ -73,9 +73,8 @@ public class RatesOfExchangeAPI implements RatesOfExchangeOutPutPort {
                 .toFuture();
     }
 
-    private URI getUriWithQueryParams(UriBuilder uriBuilder) {
-        LocalDate now = LocalDate.now();
-        String filters = String.format("effective_date:gt:%s,effective_date:lte:%s", now.minusMonths(6), now);
+    private URI getUriWithQueryParams(UriBuilder uriBuilder,LocalDate purchaseDate) {
+        String filters = String.format("effective_date:gt:%s,effective_date:lte:%s", purchaseDate.minusMonths(6), purchaseDate);
         URI build = uriBuilder
                 .path(apiPath)
                 .queryParam("filter", filters)

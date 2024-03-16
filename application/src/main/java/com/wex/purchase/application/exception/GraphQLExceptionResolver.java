@@ -1,5 +1,6 @@
 package com.wex.purchase.application.exception;
 
+import com.wex.purchase.core.exception.CoreException;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
@@ -37,6 +38,13 @@ public class GraphQLExceptionResolver extends DataFetcherExceptionResolverAdapte
             return GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.BAD_REQUEST)
                     .message(message)
+                    .build();
+        }
+
+        if(ex instanceof CoreException) {
+            return GraphqlErrorBuilder.newError()
+                    .errorType(ErrorType.BAD_REQUEST)
+                    .message(((CoreException) ex).getErrorMessage().getMessage())
                     .build();
         }
 

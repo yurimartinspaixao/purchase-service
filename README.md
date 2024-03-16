@@ -15,13 +15,10 @@ This is a GraphQL API, made with Java 17 and Spring Boot 3, that has as its goal
   * [Test The Application](#test)
 * [Explaining The Mutations and Queries](#mutations-and-queries)
   * [Mutations](#mutations)
-    * [importLeague](#importLeague)
+    * [insertPurchase](#insertPurchase)
   * [Queries](#queries)
-    * [availableLeaguesForSync](#availableLeaguesForSync)
-    * [findPlayers](#findPlayers)
-    * [findTeam](#findTeam)
-    * [searchTeam](#searchTeam)
-    * [searchPlayer](#searchPlayer)
+    * [findPurchase](#findPurchase)
+
 * [Conclusion And Final Considerations](#conclusion)
 
 <a id="architecture"></a>
@@ -81,8 +78,7 @@ mvn install
 cd application/
 mvn spring-boot:run
 ```
-<sub>note: Make sure you navigate to the application module before running spring
-boot.</sub>
+<sub>note: Make sure you navigate to the application module before running spring boot.</sub>
 
 <a id="test"></a>
 ### Test The Application
@@ -90,67 +86,42 @@ boot.</sub>
 If you followed the steps above correctly, you'll be able to access the GraphQL
 playground locally through [http://localhost:8080/playground](http://localhost:8080/v1/playground) :tada:
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-
-
-
-
-
 <a id="mutations-and-queries"></a>
 ## Explaining The Mutations and Queries
 <a id="mutations"></a>
 ### Mutations
 ___
-<a id="importLeague"></a>
-#### importLeague
-**Receives**: **leagueCode** String as argument.
+<a id="insertPurchase"></a>
+#### insertPurchase
+**Receives**: a Purchase transaction with a description, transaction date, and a purchase amount in United States dollars.
 <br />
-<sub>note: you can use the [availableLeaguesForSync](#availableLeaguesForSync) query to see a list of available League codes that can be used</sub>
 
 **Sample request**
 ```graphql
-mutation ImportLeague {
-  importLeague(leagueCode: "WC") {
-    id
-    code
-    name
+mutation {
+  insertPurchaseTransaction(purchase:{
+    description: "First transaction",
+    amount: 2.42,
+    transactionDate: "2024-03-16"
+  }) {
+    id, 
+    description, 
+    amount, 
+    transactionDate
   }
 }
 ```
-**Returns**: Competition object with the complete tree of content that has been imported to the database.
+**Returns**: a purchase transaction with a description, transaction date, and a purchase amount in United States dollars.
 
 **Sample response**
 ```json
 {
   "data": {
-    "importLeague": {
-      "code": "WC",
-      "id": "2000",
-      "name": "FIFA World Cup"
+    "insertPurchaseTransaction": {
+      "id": "2",
+      "description": "First transaction",
+      "amount": 2.42,
+      "transactionDate": "2024-03-16"
     }
   }
 }
@@ -159,269 +130,49 @@ ___
 <a id="queries"></a>
 ### Queries
 ___
-<a id="availableLeaguesForSync"></a>
-#### availableLeaguesForSync
+<a id="findPurchase"></a>
+#### findPurchase
+**Receives**: the purchase transaction ID.
 
 **Sample request**
 ```graphql
-query AvailableLeagues {
-    availableLeaguesForSync {
-        code
-        name
-    }
-}
-```
-**Returns** a list of available Leagues that can be imported using the 
-[importLeague](#importLeague) Mutation
-
-**Sample response**
-```json
-{
-  "data": {
-    "availableLeaguesForSync": [
-      {
-        "code": "WC",
-        "name": "FIFA World Cup"
-      },
-      {
-        "code": "CL",
-        "name": "UEFA Champions League"
-      }
-    ]
+query {
+  findPurchase(purchaseId: 1){
+    id, 
+    description, 
+    transactionDate, 
+    amount,
+    convertedCurrencies
   }
 }
 ```
-
-___
-<a id="findPlayers"></a>
-#### findPlayers
-**Receives**: **leagueCode** String as argument and **teamName** (optional).
-<br />
-<sub>note: The league provided has to be already synced, otherwise it will not return
-the expected result.</sub>
-**Sample request**
-```graphql
-query FindPlayers {
-    findPlayers(leagueCode: "CL", teamName: "Arsenal") {
-        id
-        person {
-            dateOfBirth
-            gamePosition
-            id
-            name
-            nationality
-        }
-    }
-}
-```
-**Returns**: A List of players.
-
-<a id="playersResponse"></a>
+**Returns** the stored purchase transactions converted to currencies supported by the Treasury Reporting Rates of Exchange API based
+upon the exchange rate active for the date of the purchase.
 **Sample response**
 ```json
 {
   "data": {
-    "findPlayers": [
-      {
-        "id": "4832",
-        "person": {
-          "dateOfBirth": "1995-09-15",
-          "gamePosition": "Goalkeeper",
-          "id": "4707",
-          "name": "David Raya",
-          "nationality": "Spain"
-        }
-      },
-      {
-        "id": "5530",
-        "person": {
-          "dateOfBirth": "1998-05-14",
-          "gamePosition": "Goalkeeper",
-          "id": "4890",
-          "name": "Aaron Ramsdale",
-          "nationality": "England"
-        }
-      }
-      // so it goes...
-    ]
-  }
-}
-```
-___
-<a id="findTeam"></a>
-#### findTeam
-**Receives**: **teamName** String as argument and **sortPlayers** (optional)
-
-**Sample request**
-```graphql
-query FindTeamInformation {
-    findTeam(teamName: "Brazil", sortPlayers: true) {
-        id
-        name
-        shortName
-        tla
-        address
-        area {
-            code
-            flag
-            id
-            name
-        }
-        coach {
-            id
-            person {
-                name
-                dateOfBirth
-                nationality
-            }
-        }
-        players {
-            id
-            person {
-                name
-                nationality
-                dateOfBirth
-                gamePosition
-            }
-        }
-    }
-}
-```
-**Returns**: A Team object with a list of players, sorted or unsorted depending on the sortPlayers argument.
-
-<a id="teamResponse"></a>
-**Sample response**
-```json
-{
-  "data": {
-    "findTeam": {
-      "id": "764",
-      "name": "Brazil",
-      "shortName": "Brazil",
-      "tla": "BRA",
-      "address": "Rua Victor Civita 66 Bloco 1, Edifico 5 Rio de Janeiro, RJ 22775-044",
-      "area": {
-        "code": "BRA",
-        "flag": "https://crests.football-data.org/764.svg",
-        "id": "2032",
-        "name": "Brazil"
-      },
-      "coach": {
-        "id": "11165",
-        "person": {
-          "name": "Fernando Diniz",
-          "dateOfBirth": "1974-03-27",
-          "nationality": "Brazil"
-        }
-      },
-      "players": [
-        {
-          "id": "2028",
-          "person": {
-            "name": "Alex Sandro",
-            "nationality": "Brazil",
-            "dateOfBirth": "1991-01-26",
-            "gamePosition": "Defence"
-          }
-        },
-        {
-          "id": "15904",
-          "person": {
-            "name": "Alex Telles",
-            "nationality": "Brazil",
-            "dateOfBirth": "1992-12-15",
-            "gamePosition": "Defence"
-          }
-        },
-        {
-          "id": "1795",
-          "person": {
-            "name": "Alisson",
-            "nationality": "Brazil",
-            "dateOfBirth": "1992-10-02",
-            "gamePosition": "Goalkeeper"
-          }
-        },
-        {
-          "id": "97085",
-          "person": {
-            "name": "Antony",
-            "nationality": "Brazil",
-            "dateOfBirth": "2000-02-24",
-            "gamePosition": "Offence"
-          }
-        }
-        // so it goes...
-      ]
+    "findPurchase": {
+      "id": "2",
+      "description": "primeira transacao",
+      "transactionDate": "2024-03-16",
+      "amount": 2.42,
+      "convertedCurrencies": "{Dirham=8.88, Maloti=44.59, Taka=273.46, Dong=58709.20, Dollar=16.33, Zloty=9.49, Rufiyaa=37.31, Manat=4.11, RTGS=19658.45, Quentzal=18.91, Escudo=241.39, Sudanese Pound=3467.86, E. Caribbean Dollar=6.53, Kwacha=4114.00, Kina=9.01, CFA Franc=1425.38, Peso=2245.03, Shilling=325.49, Tugrik=8253.86, Kwanza=2038.85, Riyal=9.07, Riel=9803.42, Real=11.74, Cedi=28.79, Lev New=4.28, Gourde=317.57, Boliviano=16.60, Ruble=215.54, Renminbi=17.19, Vatu=280.72, Somoni=26.45, Ringgit=11.10, Ouguiya=94.76, Lari=6.44, Krone=24.60, Metical=153.06, Euro=2.19, Krona=24.27, Chavito=2.42, Guarani=17544.97, Kip=49551.92, Denar=134.18, Baht=83.07, Dinar=7.41, Pa'anga=5.46, Lempira=59.59, Guilder=4.30, Dalasi=154.88, Leste-Dili=2.42, New Leu=10.88, Yen=342.35, New Lira=71.50, Shekel=8.75, Fuerte (OLD)=602173.44, Nakfa=36.30, New Kwacha=62.21, Rupiah=37201.90, Old Leone=51.78, Cordoba=88.57, Ariary=11044.88, Tenge=1104.22, Colon=1256.51, Naira=3443.66, Bolivar Soberano=86.73, Kyat=8179.60, Forint=836.78, Rand=44.59, Rial=1277.76, Lilangeni=44.59, Tala=6.42, Franc=2.02, E.Caribbean Dollar=6.53, Afghani=170.70, New Dobras=53.58, U.S. Dollar=2.42, Som=29847.72, Sol=8.89, Dolares=2.42, New Ruble=7.89, Leone=54.93, Lek=225.61, New Manat=8.44, Hryvnia=92.17, Congolese Franc=6437.20, Won=3144.11, Rupee=783.59, Pound=115.55, Koruna=52.58, Birr=135.51, Dram=968.00, Pula=32.39, LEU=41.74, Marka=4.28}"
     }
   }
 }
 ```
 ___
-<a id="searchPlayer"></a>
-#### searchPlayer
-An alternative way of searching for a player, using instead the name of the
-player as Argument, and returning a list of players as the result.
 
-This can be used as an auto-complete, given a *like* sql query was used.
-
-**Receives**: **playerName** String as Argument.
-
-**Sample request**
-```graphql
-query SearchPlayer {
-    searchPlayer(playerName: "An") {
-        id
-        person {
-            name
-            dateOfBirth
-            gamePosition
-            nationality
-        }
-    }
-}
-```
-**Returns**: A list of players (same as in [findPlayers](#findPlayers))
-___
-<a id="searchTeam"></a>
-#### searchTeam
-An alternative way of searching for a team, using instead the name of the
-team as Argument, and returning a list of team as the result.
-
-This can be used as an auto-complete, given a *like* sql query was used.
-
-**Receives**: **teamName** String as Argument.
-
-**Sample request**
-```graphql
-query SearchTeam {
-    searchTeam(teamName: "Ar") {
-        id
-        name
-        shortName
-        tla
-        address
-    }
-}
-```
-**Returns**: A list of teams (same object as in [findTeam](#findTeam) - but listed)
-___
 
 <a id="conclusion"></a>
 ## Conclusion And Final Considerations
 
-I sure hope you can see that I'm very passionate about the work I do and I hope it shows in my code :blush:
+I sure hope you can see that I'm very passionate about the work I do and I hope it shows in my code.
 
-This project was started on 2023-12-15, and given it's short time I wasn't able to finish the unit tests, other than that, I'm very proud of it :heart_eyes:
-
-If you have any questions, feel free to reach out on any of my socials:
-
-<a href="https://linkedin.com/in/cmdrlias/"><img align="left" src="docs/linkedin.png" alt="Larissa Silva | LinkedIn" width="21px"/></a>
-<a href="https://twitter.com/nickeldumbb"><img align="left" src="docs/twitter.png" alt="nickeldumbb | Twitter" width="21px"/></a>
-<a href="https://instagram.com/larssslv"><img align="left" src="docs/instagram.png" alt="larssslv | Instagram" width="21px"/></a>
-<a href="https://twitch.tv/nickeldumb"><img align="left" src="docs/twitch.png" alt="larssslv | twitch" width="21px"/></a>
+This project was started on 2024-03-11, and given it's short time I wasn't able to finish the unit tests.
 
 <br />
 <sub>This and other Projects are available on my github page!</sub>
 
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/laasilva)
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yurimartinspaixao)

@@ -1,11 +1,14 @@
 package com.wex.purchase.core.usecases;
 
+import com.wex.purchase.core.exception.CoreException;
+import com.wex.purchase.core.exception.model.ErrorMessage;
 import com.wex.purchase.core.model.ExchangeRate;
 import com.wex.purchase.core.model.Purchase;
 import com.wex.purchase.core.ports.in.PurchaseInPutPort;
 import com.wex.purchase.core.ports.in.RatesOfExchangeOutPutPort;
 import com.wex.purchase.core.ports.out.PurchaseOutPutPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,7 +29,11 @@ public class PurchaseUseCase implements PurchaseInPutPort {
     @Override
     public Purchase findPurchase(Long id) {
         Purchase purchase = persistenceAdapter.findById(id);
-        List<ExchangeRate> rates = ratesOfExchangeAdapter.findAll();
+        List<ExchangeRate> rates = ratesOfExchangeAdapter.findAll(purchase.getTransactionDate());
+
+        if(CollectionUtils.isEmpty(rates)) {
+            throw new CoreException(ErrorMessage.NO_RATE_AVAILABLE_CODE.getCode(), ErrorMessage.NO_RATE_AVAILABLE_CODE.getMessage());
+        }
 
         Map<String, ExchangeRate> ratesWithNoDuplicates = rates.stream().collect(
                 Collectors.toMap(ExchangeRate::getCurrency, Function.identity(), compareEffectiveDateToMerge()));
@@ -40,7 +47,7 @@ public class PurchaseUseCase implements PurchaseInPutPort {
                                         .setScale(2, RoundingMode.FLOOR)
                         ));
 
-        purchase.setRates(convertedRates);
+        purchase.setConvertedCurrencies(convertedRates);
         return purchase;
     }
 

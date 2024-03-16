@@ -17,6 +17,6 @@ public class Purchase {
     private String description;
     private BigDecimal amount;
     private LocalDate transactionDate;
-    private Map<String, BigDecimal> rates;
+    private Map<String, BigDecimal> convertedCurrencies;
 
 }

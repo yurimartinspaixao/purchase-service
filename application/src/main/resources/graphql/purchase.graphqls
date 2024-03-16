@@ -11,7 +11,7 @@ type Purchase {
     description: String
     amount: Float,
     transactionDate: String,
-    rates: String
+    convertedCurrencies: String
 }
 
 input PurchaseInput {
