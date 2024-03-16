@@ -33,7 +33,7 @@ that you can inject dependencies, plugins and other needed tools *only* in the m
 need them.
 * The Application layer concerns everything that is going to be consumed (and visible) to the user - from controllers and models to error messages and docs (as well as configurations needed);
 * The Core layer concerns business rules, validations and exceptions, being the connection between the user interactions and the data to be consumed;
-* The Datasource layer concerns quite literally, the data that will be consumed - be it from a database or any external connection (in this particular case, the football-data.org imports).
+* The Datasource layer concerns quite literally, the data that will be consumed - be it from a database or any external connection (in this particular case, the [Treasury Reporting Rates of Exchange API](https://fiscaldata.treasury.gov/datasets/treasury-reporting-rates-exchange/treasury-reporting-rates-of-exchange)).
 
 ![Visual representation of the Hexagonal Architecture](docs/hexagonal_architecture_representation.png "Visual representation of the Hexagonal Architecture")
 
