@@ -84,7 +84,7 @@ mvn spring-boot:run
 ### Test The Application
 
 If you followed the steps above correctly, you'll be able to access the GraphQL
-playground locally through [http://localhost:8080/playground](http://localhost:8080/v1/playground) :tada:
+playground locally through [http://localhost:8080/playground](http://localhost:8080/playground) :tada:
 
 <a id="mutations-and-queries"></a>
 ## Explaining The Mutations and Queries
