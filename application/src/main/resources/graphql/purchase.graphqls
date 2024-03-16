@@ -1,0 +1,21 @@
+type Query {
+    findAllPurchases: [Purchase]
+}
+
+type Mutation {
+    insertPurchaseTransaction(purchase: PurchaseInput): Purchase
+}
+
+type Purchase {
+    id: ID,
+    description: String
+    amount: Float,
+    transactionDate: String,
+    rates: String
+}
+
+input PurchaseInput {
+    description: String!
+    amount: Float!,
+    transactionDate: String
+}

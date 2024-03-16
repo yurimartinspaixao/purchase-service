@@ -1,0 +1,43 @@
+spring:
+    main:
+        allow-bean-definition-overriding: true
+    graphql:
+        graphiql:
+            enabled: true
+            path: /playground
+    data:
+        rest:
+            defaultMediaType: application/json
+            default-media-type: application/json
+    application:
+        name: purchase-service
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: changeme
+        url: jdbc:postgresql://localhost:5432/purchase_db
+        username: admin
+        hikari:
+            maximum-pool-size: 5
+            connection-timeout: 5000
+            pool-name: pool-starter
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+    server:
+        forward-headers-strategy: framework
+        port: 8080
+        servlet:
+            context-path: /v1
+
+liquibase:
+    changeLog: classpath:/db/changelog/db.changelog-master.xml
+
+fiscal-treasure-data:
+    base-uri: https://api.fiscaldata.treasury.gov
+    rates-of-exchange-api: /services/api/fiscal_service/v1/accounting/od/rates_of_exchange
+
+logging:
+    level:
+        org.springframework.cloud.openfeign: TRACE

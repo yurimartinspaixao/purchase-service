@@ -1,0 +1,17 @@
+version: '3.6'
+services:
+  purchase-service:
+    image: postgres
+    container_name: purchase-service-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: purchase_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: changeme
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-volume:/var/lib/purchase_db
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+volumes:
+  postgres-volume:
