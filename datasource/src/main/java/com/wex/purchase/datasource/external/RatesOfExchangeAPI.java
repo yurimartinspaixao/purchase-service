@@ -32,16 +32,13 @@ public class RatesOfExchangeAPI implements RatesOfExchangeOutPutPort {
     private final String apiPath;
     private final WebClient.Builder webClientBuilder;
 
-    private final TreasuryExchangeRatesClient exchangeRatesClient;
-
     public RatesOfExchangeAPI(
             @Value("${fiscal-treasure-data.base-uri}") String baseUri,
             @Value("${fiscal-treasure-data.rates-of-exchange-api}") String apiPath,
-            WebClient.Builder webClientBuilder, TreasuryExchangeRatesClient exchangeRatesClient) {
+            WebClient.Builder webClientBuilder) {
         this.baseUri = baseUri;
         this.apiPath = apiPath;
         this.webClientBuilder = webClientBuilder;
-        this.exchangeRatesClient = exchangeRatesClient;
     }
 
     @Override

@@ -1,5 +1,5 @@
 type Query {
-    findAllPurchases: [Purchase]
+    findPurchase(purchaseId: ID!): Purchase
 }
 
 type Mutation {

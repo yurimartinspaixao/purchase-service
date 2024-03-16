@@ -5,7 +5,7 @@
 ![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-This is a GraphQL API, made with Java 21 and Spring Boot 3, that has as its goal is to manage purchases and expose required data.
+This is a GraphQL API, made with Java 17 and Spring Boot 3, that has as its goal is to manage purchases and expose required data.
 
 ## Table of Contents
 * [Explaining The Architecture](#architecture)
@@ -49,7 +49,7 @@ This is a Java 21 and Spring Boot 3 based project, that uses Maven as it's build
 and has a dockerized container to run the database, 
 
 That being said, in order to successfully run this application you'll need:
-* Java 21
+* Java 17
 * Maven
 * Docker
 
@@ -89,6 +89,36 @@ boot.</sub>
 
 If you followed the steps above correctly, you'll be able to access the GraphQL
 playground locally through [http://localhost:8080/v1/playground](http://localhost:8080/v1/playground) :tada:
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
 
 <a id="mutations-and-queries"></a>
 ## Explaining The Mutations and Queries

@@ -12,8 +12,6 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class PurchaseController {
@@ -25,8 +23,8 @@ public class PurchaseController {
     private final PurchaseInputMapper mapper;
 
     @QueryMapping
-    public List<Purchase> findAllPurchases() {
-        return purchaseInPutPort.findAll();
+    public Purchase findPurchase(@Argument Long purchaseId) {
+        return purchaseInPutPort.findPurchase(purchaseId);
     }
 
     @MutationMapping

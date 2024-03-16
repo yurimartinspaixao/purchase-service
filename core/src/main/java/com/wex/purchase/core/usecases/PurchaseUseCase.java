@@ -24,27 +24,24 @@ public class PurchaseUseCase implements PurchaseInPutPort {
     private final RatesOfExchangeOutPutPort ratesOfExchangeAdapter;
 
     @Override
-    public List<Purchase> findAll() {
-        List<Purchase> purchases = persistenceAdapter.findAll();
+    public Purchase findPurchase(Long id) {
+        Purchase purchase = persistenceAdapter.findById(id);
         List<ExchangeRate> rates = ratesOfExchangeAdapter.findAll();
 
-        purchases.forEach(purchase -> {
-            Map<String, ExchangeRate> ratesWithNoDuplicates = rates.stream().collect(
-                    Collectors.toMap(ExchangeRate::getCurrency, Function.identity(), compareEffectiveDateToMerge()));
+        Map<String, ExchangeRate> ratesWithNoDuplicates = rates.stream().collect(
+                Collectors.toMap(ExchangeRate::getCurrency, Function.identity(), compareEffectiveDateToMerge()));
 
-            Map<String, BigDecimal> convertedRates =
-                    ratesWithNoDuplicates.entrySet().stream().collect(
-                            Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    entry -> entry.getValue().getExchangeRate()
-                                            .multiply(purchase.getAmount())
-                                            .setScale(2, RoundingMode.FLOOR)
-                            ));
+        Map<String, BigDecimal> convertedRates =
+                ratesWithNoDuplicates.entrySet().stream().collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().getExchangeRate()
+                                        .multiply(purchase.getAmount())
+                                        .setScale(2, RoundingMode.FLOOR)
+                        ));
 
-            purchase.setRates(convertedRates);
-        });
-
-        return purchases;
+        purchase.setRates(convertedRates);
+        return purchase;
     }
 
     private static BinaryOperator<ExchangeRate> compareEffectiveDateToMerge() {
