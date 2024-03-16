@@ -88,7 +88,7 @@ boot.</sub>
 ### Test The Application
 
 If you followed the steps above correctly, you'll be able to access the GraphQL
-playground locally through [http://localhost:8080/v1/playground](http://localhost:8080/v1/playground) :tada:
+playground locally through [http://localhost:8080/playground](http://localhost:8080/v1/playground) :tada:
 
 <br>
 <br>
