@@ -42,7 +42,7 @@ need them.
 <a id="run"></a>
 ## How To Run The Project
 
-This is a Java 21 and Spring Boot 3 based project, that uses Maven as it's build automation tool,
+This is a Java 17 and Spring Boot 3 based project, that uses Maven as it's build automation tool,
 and has a dockerized container to run the database, 
 
 That being said, in order to successfully run this application you'll need:
